@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import { ref, reactive } from "@vue/composition-api";
 import {
   stripscript,
   emailValidator,
@@ -62,23 +61,8 @@ import {
   codeValidator
 } from "@/utils/validate";
 export default {
-  setup(props, context) {
-    /**
-     * 数据相关
-     */
-    const model = ref("login");
-    const menuTab = reactive([
-      { txt: "登录", current: true, type: "login" },
-      { txt: "注册", current: false, type: "register" }
-    ]);
-    /*表单验证*/
-    const ruleForm = reactive({
-      username: "",
-      password: "",
-      passwords: "",
-      code: ""
-    });
-    const usernameValidate = (rule, value, callback) => {
+  data() {
+    var usernameValidate = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("用户名不能为空"));
       } else if (!emailValidator(value)) {
@@ -87,9 +71,9 @@ export default {
         callback();
       }
     };
-    const passwordValidate = (rule, value, callback) => {
-      ruleForm.password = stripscript(value);
-      value = ruleForm.password;
+    var passwordValidate = (rule, value, callback) => {
+      this.ruleForm.password = stripscript(value);
+      value = this.ruleForm.password;
       if (value === "") {
         callback(new Error("请输入密码"));
       } else if (!passwordValidator(value)) {
@@ -98,16 +82,16 @@ export default {
         callback();
       }
     };
-    const passwordValidates = (rule, value, callback) => {
-      ruleForm.passwords = stripscript(value);
-      value = ruleForm.passwords;
+    var passwordValidates = (rule, value, callback) => {
+      this.ruleForm.passwords = stripscript(value);
+      value = this.ruleForm.passwords;
       if (value === "") {
         callback(new Error("请再次输入密码"));
-      } else if (value != ruleForm.password) {
+      } else if (value!=this.ruleForm.password) {
         return callback(new Error("再次确认密码有误"));
       }
     };
-    const codeValidate = (rule, value, callback) => {
+    var codeValidate = (rule, value, callback) => {
       if (value === "") {
         return callback(new Error("请输入验证码"));
       } else if (!passwordValidator(value)) {
@@ -116,11 +100,29 @@ export default {
         callback();
       }
     };
-    /**
-     * 方法相关
-     */
-    const submitForm = formName => {
-      context.refs[formName].validate(valid => {
+    return {
+      menuTab: [
+        { txt: "登录", current: true,type:"login" },
+        { txt: "注册", current: false, type:"register" }
+      ],
+      ruleForm: {
+        username: "",
+        password: "",
+        passwords: "",
+        code: ""
+      },
+      rules: {
+        username: [{ validator: usernameValidate, trigger: "blur" }],
+        password: [{ validator: passwordValidate, trigger: "blur" }],
+        passwords: [{ validator: passwordValidates, trigger: "blur" }],
+        code: [{ validator: codeValidate, trigger: "blur" }]
+      },
+      model:"login"
+    };
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           alert("submit!");
         } else {
@@ -128,32 +130,17 @@ export default {
           return false;
         }
       });
-    };
-    const toggleMenu = value => {
-      model.value = value.type;
-      menuTab.forEach(element => {
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    toggleMenu(value) {
+      this.model = value.type
+      this.menuTab.forEach(element => {
         element.current = false;
       });
       value.current = true;
-    };
-    const rules = reactive({
-      username: [{ validator: usernameValidate, trigger: "blur" }],
-      password: [{ validator: passwordValidate, trigger: "blur" }],
-      passwords: [{ validator: passwordValidates, trigger: "blur" }],
-      code: [{ validator: codeValidate, trigger: "blur" }]
-    });
-    return {
-      menuTab,
-      model,
-      toggleMenu,
-      rules,
-      ruleForm,
-      submitForm,
-      codeValidate,
-      passwordValidates,
-      passwordValidate,
-      usernameValidate
-    };
+    }
   }
 };
 </script>
