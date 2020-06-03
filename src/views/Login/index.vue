@@ -16,22 +16,29 @@
         </el-form-item>
         <el-form-item prop="password" class="form-item">
           <label>密码</label>
-          <el-input 
-            type="password" 
-            v-model="ruleForm.password" 
+          <el-input
+            type="password"
+            v-model="ruleForm.password"
             minlength="6"
             maxlength="20"
-            autocomplete="off"></el-input>
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="passwords" class="form-item" v-if="model==='register'">
+          <label>确认密码</label>
+          <el-input
+            type="password"
+            v-model="ruleForm.passwords"
+            minlength="6"
+            maxlength="20"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="code" class="form-item">
           <label>验证码</label>
           <el-row :gutter="10">
             <el-col :span="15">
-              <el-input 
-                v-model.number="ruleForm.code"
-                maxlength="6"
-                minlength="6"
-                ></el-input>
+              <el-input v-model.number="ruleForm.code" maxlength="6" minlength="6"></el-input>
             </el-col>
             <el-col :span="9">
               <el-button type="success" class="block">获取验证码</el-button>
@@ -47,33 +54,47 @@
 </template>
 
 <script>
+import {
+  stripscript,
+  emailValidator,
+  passwordValidator,
+  codeValidator
+} from "@/utils/validate";
 export default {
   data() {
     var usernameValidate = (rule, value, callback) => {
-      let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/; 
       if (!value) {
         return callback(new Error("用户名不能为空"));
-      }else if(!reg.test(value)){
+      } else if (!emailValidator(value)) {
         return callback(new Error("用户名格式有误"));
-      }else{
-        callback()
+      } else {
+        callback();
       }
     };
     var passwordValidate = (rule, value, callback) => {
-      let reg = /^(?!\D+$)(?![^a-zA-Z]+$)\S{6,20}$/;
+      this.ruleForm.password = stripscript(value);
+      value = this.ruleForm.password;
       if (value === "") {
         callback(new Error("请输入密码"));
-      } else if(!reg.test(value)){
+      } else if (!passwordValidator(value)) {
         return callback(new Error("密码格式有误"));
-      }else{
-         callback();
+      } else {
+        callback();
+      }
+    };
+    var passwordValidates = (rule, value, callback) => {
+      this.ruleForm.passwords = stripscript(value);
+      value = this.ruleForm.passwords;
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value!=this.ruleForm.password) {
+        return callback(new Error("再次确认密码有误"));
       }
     };
     var codeValidate = (rule, value, callback) => {
-       let reg = /^[a-z0-9]{6}$/;
       if (value === "") {
         return callback(new Error("请输入验证码"));
-      } else if (!reg.test(value)) {
+      } else if (!passwordValidator(value)) {
         return callback(new Error("验证码格式有误"));
       } else {
         callback();
@@ -81,19 +102,22 @@ export default {
     };
     return {
       menuTab: [
-        { txt: "登录", current: true },
-        { txt: "注册", current: false }
+        { txt: "登录", current: true,type:"login" },
+        { txt: "注册", current: false, type:"register" }
       ],
       ruleForm: {
         username: "",
         password: "",
+        passwords: "",
         code: ""
       },
       rules: {
         username: [{ validator: usernameValidate, trigger: "blur" }],
         password: [{ validator: passwordValidate, trigger: "blur" }],
+        passwords: [{ validator: passwordValidates, trigger: "blur" }],
         code: [{ validator: codeValidate, trigger: "blur" }]
-      }
+      },
+      model:"login"
     };
   },
   methods: {
@@ -111,6 +135,7 @@ export default {
       this.$refs[formName].resetFields();
     },
     toggleMenu(value) {
+      this.model = value.type
       this.menuTab.forEach(element => {
         element.current = false;
       });
