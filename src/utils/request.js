@@ -27,7 +27,7 @@ service.interceptors.request.use(function (config) {
  * */
 service.interceptors.response.use(function (response) {
     let data = response.data;
-    if(data.resCode!==0){
+    if(data.resCode!=0){
         Message.error(data.message);
         return Promise.reject(data);
     }else{

@@ -4,7 +4,7 @@
 // eslint-disable-next-line no-unused-vars
 import service from "../utils/request";
 
-export function getSms(data) {
+export function GetSms(data) {
     return service.request({
         method:"post",
         url:"/getSms/",
