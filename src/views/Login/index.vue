@@ -12,9 +12,7 @@
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="login-form">
         <el-form-item prop="username" class="form-item">
           <label for="username">用户名</label>
-          <el-input 
-          id="username"
-          type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
+          <el-input id="username" type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item prop="password" class="form-item">
           <label for="password">密码</label>
@@ -41,10 +39,18 @@
           <label>验证码</label>
           <el-row :gutter="10">
             <el-col :span="15">
-              <el-input v-model.number="ruleForm.code" maxlength="6" minlength="6"></el-input>
+              <el-input v-model="ruleForm.code" maxlength="6" minlength="6"></el-input>
             </el-col>
             <el-col :span="9">
-              <el-button type="success" class="block" @click="getSms">获取验证码</el-button>
+              <el-button
+                type="success"
+                class="block"
+                @click="getSms"
+                :disabled="codeButtonStatus.status"
+              >
+                {{codeButtonStatus.text
+                }}
+              </el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -62,8 +68,8 @@
 </template>
 
 <script>
-import { GetSms } from "../../api/login";
-import { ref, reactive, onMounted } from "@vue/composition-api";
+import { GetSms, register, login } from "../../api/login";
+import { ref, reactive, onMounted, refs } from "@vue/composition-api";
 import {
   stripscript,
   emailValidator,
@@ -78,10 +84,15 @@ export default {
      */
     const model = ref("login");
     const loginButtonStatus = ref(true);
+    const codeButtonStatus = reactive({
+      status: false,
+      text: "发送验证码"
+    });
     const menuTab = reactive([
       { txt: "登录", current: true, type: "login" },
       { txt: "注册", current: false, type: "register" }
     ]);
+    const timer = ref(null);
     /*表单验证*/
     const ruleForm = reactive({
       username: "",
@@ -116,6 +127,8 @@ export default {
         callback(new Error("请再次输入密码"));
       } else if (value != ruleForm.password) {
         return callback(new Error("再次确认密码有误"));
+      } else {
+        callback();
       }
     };
     const codeValidate = (rule, value, callback) => {
@@ -135,32 +148,100 @@ export default {
         context.root.$message.error("用户名不能为空");
         return false;
       }
-      if(!emailValidator(ruleForm.username)){
+      if (!emailValidator(ruleForm.username)) {
         context.root.$message.error("用户名格式有误,请重新输入");
         return false;
       }
       let params = {
         username: ruleForm.username,
-        model:model.value
+        model: model.value
       };
-      console.log(params)
-      GetSms(params).then(response => {
-        let { message } = response.data;
-        context.root.$message({
-          message: message,
-          type: "success"
-        });
-      }).catch(error=>{});
+      codeButtonStatus.status = true;
+      codeButtonStatus.text = "发送中";
+      GetSms(params)
+        .then(response => {
+          let { message } = response.data;
+          context.root.$message({
+            message: message,
+            type: "success"
+          });
+          countDown(60);
+          loginButtonStatus.value = false;
+        })
+        .catch(error => {});
+    };
+    const countDown = number => {
+      /**
+       * 事先清除定时器
+       */
+
+      timer.value ? clearInterval(timer.value) : null;
+      let time = number;
+      timer.value = setInterval(() => {
+        if (time == 0) {
+          clearInterval(timer.value);
+          codeButtonStatus.text = `重新发送`;
+          codeButtonStatus.status = false;
+        } else {
+          codeButtonStatus.text = `倒计时${time}秒`;
+        }
+        time--;
+      }, 1000);
     };
     const submitForm = formName => {
       context.refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          let paramsData = {
+            username: ruleForm.username,
+            password: ruleForm.password,
+            code: ruleForm.code,
+            module: model.value
+          };
+          if(model.value==='login'){
+            handleLogin(paramsData);
+          }else{
+            handleRegister(paramsData);
+          }
+          
         } else {
           console.log("error submit!!");
           return false;
         }
       });
+    };
+    const handleLogin = (paramsData)=>{
+      login(paramsData).then(
+        response=>{
+          let {data} = response;
+           context.root.$message({
+                message: data.message,
+                type: "success"
+              });
+        }
+      )
+    };
+    const handleRegister = (paramsData)=>{
+      register(paramsData).then(response => {
+              let { data } = response;
+              context.root.$message({
+                message: data.message,
+                type: "success"
+              });
+              /**
+               * 切换注册、登录
+               * 定时器清除
+               */
+              toggleMenu(menuTab[0]);
+              clearCountDown();
+            })
+            .catch(error => {
+              console.log(error);
+            });
+    };
+    const clearCountDown = () => {
+      codeButtonStatus.status = false;
+      codeButtonStatus.text = "发送验证码";
+      clearInterval(timer.value);
     };
     const toggleMenu = value => {
       model.value = value.type;
@@ -168,6 +249,7 @@ export default {
         element.current = false;
       });
       value.current = true;
+      context.refs.ruleForm.resetFields();
     };
 
     const rules = reactive({
@@ -190,7 +272,8 @@ export default {
       passwordValidates,
       passwordValidate,
       usernameValidate,
-      getSms
+      getSms,
+      codeButtonStatus
     };
   }
 };

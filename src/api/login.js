@@ -26,7 +26,22 @@ export function getUserRole(data){
 /**
  * register
  **/
+export function register(data){
+    return service.request({
+        method:"post",
+        url:"/register/",
+        data
+    })
+}
+
 
 /**
  * login
  **/
+export function login(data){
+    return service.request({
+        method: "post",
+        url:"/login/",
+        data
+    })
+}
