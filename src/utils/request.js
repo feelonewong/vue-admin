@@ -13,6 +13,7 @@ const service = axios.create({
 
 /**
  * 请求拦截器
+ * 请求接口之前，做一些数据处理
  * */
 service.interceptors.request.use(function (config) {
     config.headers['Tokey'] = getToKen();

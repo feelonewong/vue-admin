@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import sha1 from "js-sha1";
 import { GetSms, register, login } from "../../api/login";
 import { ref, reactive, onMounted, refs } from "@vue/composition-api";
 import {
@@ -193,7 +194,7 @@ export default {
         if (valid) {
           let paramsData = {
             username: ruleForm.username,
-            password: ruleForm.password,
+            password: sha1(ruleForm.password),
             code: ruleForm.code,
             module: model.value
           };
@@ -249,6 +250,7 @@ export default {
         element.current = false;
       });
       value.current = true;
+      clearCountDown();
       context.refs.ruleForm.resetFields();
     };
 
