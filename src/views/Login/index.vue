@@ -174,8 +174,7 @@ export default {
     const countDown = number => {
       /**
        * 事先清除定时器
-       */
-
+       */ 
       timer.value ? clearInterval(timer.value) : null;
       let time = number;
       timer.value = setInterval(() => {
@@ -192,12 +191,14 @@ export default {
     const submitForm = formName => {
       context.refs[formName].validate(valid => {
         if (valid) {
+//            password: sha1(ruleForm.password),
           let paramsData = {
             username: ruleForm.username,
-            password: sha1(ruleForm.password),
+            password: ruleForm.password,
             code: ruleForm.code,
             module: model.value
           };
+          
           if(model.value==='login'){
             handleLogin(paramsData);
           }else{
@@ -218,6 +219,10 @@ export default {
                 message: data.message,
                 type: "success"
               });
+              context.root.$router.push({
+                name:"Console"
+              })
+              console.log(context)
         }
       )
     };

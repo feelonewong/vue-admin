@@ -1,0 +1,15 @@
+.el-submenu .el-menu-item{
+    padding-left: 50px !important;
+    &.is-active{
+        background-color:rgba(245,108,108,.2)  !important;
+        color: #fff ;
+    }
+}
+/**
+ 修改一级菜单的样式
+*/
+
+.el-submenu.is-active .el-submenu__title{
+    background-color: #f56c6c !important;
+
+}
