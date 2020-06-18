@@ -206,7 +206,6 @@ export default {
           }
           
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
@@ -222,7 +221,6 @@ export default {
               context.root.$router.push({
                 name:"Console"
               })
-              console.log(context)
         }
       )
     };
@@ -241,7 +239,6 @@ export default {
               clearCountDown();
             })
             .catch(error => {
-              console.log(error);
             });
     };
     const clearCountDown = () => {
