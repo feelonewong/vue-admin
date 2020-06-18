@@ -80,7 +80,7 @@ const routes = [
       {
         path: "/userInfo",
         name: "Console",
-        component: () => import("../views/Console/index.vue"),
+        component: () => import("../views/User/index.vue"),
         meta: {
           name: "用户列表"
         },

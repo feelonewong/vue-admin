@@ -1,5 +1,8 @@
 <template>
   <div id="nav-wrap">
+    <span class="logo">
+      <img src="../../../assets/logo.png" alt="" width="50">
+    </span>
     <el-menu
       style="border-right: 1px solid #344a5f"
       default-active="1-4-1"
@@ -56,6 +59,12 @@ export default {
   width: $navMenuWidth;
   height: 100vh;
   background-color: #344a5f;
+}
+.logo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 18px 0;
 }
 
 </style>
