@@ -4,20 +4,16 @@
       <img src="../../../assets/logo.png" alt="" width="50">
     </span>
     <el-menu
-      style="border-right: 1px solid #344a5f"
-      default-active="1-4-1"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
+      style="border-right: 1px solid #344a5f"  
       :collapse="isCollapse"
       background-color="#344a5f"
       text-color="#fff"
       router
+      :collapse-transition = "false"
     >
       <template v-for="(item,index) in routes">
         <el-submenu :index="index+'' " :key="item.id" v-if="!item.hide">
           <template slot="title">
-            {{item.eeeeeeeeeeeee}}
            <svg-icon  :iconClass="item.meta.icon"  :className="item.meta.icon"/> 
             <span slot="title">{{item.meta.name}}</span>
           </template>
@@ -33,18 +29,13 @@
 </template>
 
 <script>
-import { ref, reactive } from "@vue/composition-api";
+import { ref, reactive ,computed} from "@vue/composition-api";
 export default {
   setup(prop, context) {
-    const isCollapse = ref(false);
-    const routes = reactive(context.root.$router.options.routes);
-    console.log(routes);
-    const handleOpen = () => {};
-    const handleClose = () => {};
+    const isCollapse = computed(() => context.root.$store.state.app.isCollapse);
+    const routes = reactive(context.root.$router.options.routes);  
     return {
       isCollapse,
-      handleOpen,
-      handleClose,
       routes
     };
   }
@@ -59,6 +50,7 @@ export default {
   width: $navMenuWidth;
   height: 100vh;
   background-color: #344a5f;
+  transition: transition, all .3s ease 0s;
 }
 .logo{
   display: flex;
@@ -66,5 +58,10 @@ export default {
   align-items: center;
   padding: 18px 0;
 }
-
+.open {
+  #nav-wrap { width: $navMenuWidth; }
+}
+.close {
+  #nav-wrap { width: 65px; }
+}
 </style>

@@ -31,7 +31,7 @@ const routes = [
     },
     children: [
       {
-        path: "/console",
+        path: "/index",
         name: "Console",
         component: () => import("../views/Console/index.vue"),
         meta: {

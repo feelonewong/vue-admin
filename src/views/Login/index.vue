@@ -174,7 +174,8 @@ export default {
     const countDown = number => {
       /**
        * 事先清除定时器
-       */ 
+       */
+
       timer.value ? clearInterval(timer.value) : null;
       let time = number;
       timer.value = setInterval(() => {
@@ -191,58 +192,54 @@ export default {
     const submitForm = formName => {
       context.refs[formName].validate(valid => {
         if (valid) {
-//            password: sha1(ruleForm.password),
+          //            password: sha1(ruleForm.password),
           let paramsData = {
             username: ruleForm.username,
             password: ruleForm.password,
             code: ruleForm.code,
             module: model.value
           };
-          
-          if(model.value==='login'){
+
+          if (model.value === "login") {
             handleLogin(paramsData);
-          }else{
+          } else {
             handleRegister(paramsData);
           }
-          
         } else {
           console.log("error submit!!");
           return false;
         }
       });
     };
-    const handleLogin = (paramsData)=>{
-      login(paramsData).then(
-        response=>{
-          let {data} = response;
-           context.root.$message({
-                message: data.message,
-                type: "success"
-              });
-              context.root.$router.push({
-                name:"Console"
-              })
-              console.log(context)
-        }
-      )
+    const handleLogin = paramsData => {
+      context.root.$store.dispatch("app/Login", paramsData).then(response => {
+        context.root.$message({
+          message: response.message,
+          type: "success"
+        });
+        context.root.$router.push({
+          name: "Console"
+        });
+      }).catch(error=>{console.log(error)});
     };
-    const handleRegister = (paramsData)=>{
-      register(paramsData).then(response => {
-              let { data } = response;
-              context.root.$message({
-                message: data.message,
-                type: "success"
-              });
-              /**
-               * 切换注册、登录
-               * 定时器清除
-               */
-              toggleMenu(menuTab[0]);
-              clearCountDown();
-            })
-            .catch(error => {
-              console.log(error);
-            });
+    const handleRegister = paramsData => {
+      register(paramsData)
+        .then(response => {
+          let { data } = response;
+          context.root.$message({
+            message: data.message,
+            type: "success"
+          });
+          /**
+           * 切换注册、登录
+           * 定时器清除
+           */
+          toggleMenu(menuTab[0]);
+          clearCountDown();
+        })
+        .catch(error => {
+          console.log(error);
+        });
     };
     const clearCountDown = () => {
       codeButtonStatus.status = false;
