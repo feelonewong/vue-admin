@@ -9,11 +9,10 @@ router.beforeEach( (to,from,next)=>{
     }else{
         console.log('router-beforeEach')
         if(whiteRouter.indexOf(to.path) !==-1 ){
-            console.log('chenggong')
             next();
         }else{
+            next('/login')
             console.log('error')
-            next("/login");
         }
     }
 })
