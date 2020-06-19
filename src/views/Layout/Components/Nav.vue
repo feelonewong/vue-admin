@@ -6,10 +6,10 @@
     <el-menu
       style="border-right: 1px solid #344a5f"  
       :collapse="isCollapse"
+      :collapse-transition	="false"
       background-color="#344a5f"
       text-color="#fff"
       router
-      :collapse-transition = "false"
     >
       <template v-for="(item,index) in routes">
         <el-submenu :index="index+'' " :key="item.id" v-if="!item.hide">
@@ -49,6 +49,7 @@ export default {
   left: 0;
   width: $navMenuWidth;
   height: 100vh;
+  transition: all .3s ease 0s;
   background-color: #344a5f;
   transition: transition, all .3s ease 0s;
 }

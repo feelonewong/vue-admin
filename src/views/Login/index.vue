@@ -206,7 +206,6 @@ export default {
             handleRegister(paramsData);
           }
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
