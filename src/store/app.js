@@ -1,14 +1,14 @@
-import Cookie from "cookie_js";
+import cookie from "cookie_js";
 import {login} from "../api/login";
 const state= {
-        isCollapse: false,
-        // JSON.parse(Cookie.get("isCollapse"))||
+        isCollapse: cookie.get('isCollapse')&&JSON.parse(cookie.get('isCollapse'))||false,    
+        
     }
     const getters = {};
 const  mutations = {
         SET_COLLAPSE(state) {
             state.isCollapse = !state.isCollapse;
-            Cookie.set("isCollapse", JSON.stringify(state.isCollapse));
+            cookie.set("isCollapse", JSON.stringify(state.isCollapse));
         }
     }
 const actions = {

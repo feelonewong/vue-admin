@@ -5,14 +5,12 @@ import router from "./router";
 import store from "./store";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import "./router/premit"
 import "./icons/"
 Vue.use(VueCompositionApi);
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
-router.beforeEach( (to,from,next)=>{
-  next();
-} )
 
 
 new Vue({

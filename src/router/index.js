@@ -24,6 +24,7 @@ const routes = [
   {
     path: "/console",
     name: "Console",
+    redirect: "index",
     component: Layout,
     meta: {
       name: "首页",
@@ -32,7 +33,7 @@ const routes = [
     children: [
       {
         path: "/index",
-        name: "Console",
+        name: "Index",
         component: () => import("../views/Console/index.vue"),
         meta: {
           name: "控制台"
