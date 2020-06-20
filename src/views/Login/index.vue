@@ -216,7 +216,6 @@ export default {
           message: response.message,
           type: "success"
         });
-        console.log('end')
         context.root.$router.push({
           name: "Console"
         });

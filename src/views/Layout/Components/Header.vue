@@ -6,9 +6,10 @@
       </div>
       <div class="user-info">
         <svg-icon iconClass="admin" class="admin"></svg-icon>
-        <span class="admin">管理员</span>
-
-        <svg-icon iconClass="exit" class="exit"></svg-icon>
+        <span class="admin">{{username}}</span>
+        <span @click="exit">
+          <svg-icon iconClass="exit" class="exit"></svg-icon>
+        </span>
       </div>
     </div>
   </div>
@@ -18,11 +19,19 @@
 import { computed } from "@vue/composition-api";
 export default {
   setup(props, context) {
+    const username = computed(() => context.root.$store.state.app.username);
     const navMenuState = () => {
       context.root.$store.commit("app/SET_COLLAPSE");
     };
+    const exit = () => {
+      context.root.$store.dispatch("app/Exit").then( (reoslve)=>{
+        context.root.$router.push({name:"Login"})
+      });
+    };
     return {
-      navMenuState
+      navMenuState,
+      username,
+      exit
     };
   }
 };
@@ -38,7 +47,7 @@ export default {
   background-color: #fff;
   box-shadow: 0 3px 16px rgba(0, 0, 0, 0.1);
   width: calc(100% - 250px);
-  transition: transition, all .3s ease 0s;
+  transition: transition, all 0.3s ease 0s;
 
   .header-icon {
     padding-left: 32px;

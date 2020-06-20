@@ -80,7 +80,7 @@ const routes = [
     children: [
       {
         path: "/userInfo",
-        name: "Console",
+        name: "userInfo",
         component: () => import("../views/User/index.vue"),
         meta: {
           name: "用户列表"
