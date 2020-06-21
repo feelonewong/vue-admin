@@ -69,6 +69,7 @@
       <el-table-column prop="user" align="center" label="管理人" width="140"></el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
+        
           <el-button type="danger" size="mini">删除</el-button>
           <el-button type="success" size="mini">编辑</el-button>
         </template>
