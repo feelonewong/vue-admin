@@ -15,7 +15,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="10">
-          <el-form-item label="日期:">
+          <el-form-item label="日期:" style="margin-right:0;">
             <el-date-picker
               size="mini"
               v-model="currentDate"
@@ -68,9 +68,8 @@
       <el-table-column prop="date" align="center" label="日期" width="160"></el-table-column>
       <el-table-column prop="user" align="center" label="管理人" width="140"></el-table-column>
       <el-table-column label="操作" align="center">
-        <template slot-scope="scope">
-        
-          <el-button type="danger" size="mini">删除</el-button>
+        <template>
+          <el-button type="danger" size="mini" @click="handleDeleteItem">删除</el-button>
           <el-button type="success" size="mini">编辑</el-button>
         </template>
       </el-table-column>
@@ -78,8 +77,8 @@
 
     <!-- 页面底部 -->
     <el-row style="margin-top:20px;" type="flex" justify="space-between">
-      <el-col >
-        <el-button size="medium">批量删除</el-button>
+      <el-col>
+        <el-button size="medium" @click="handleBatchDeleteItem">批量删除</el-button>
       </el-col>
       <el-col>
         <el-pagination
@@ -94,12 +93,17 @@
         ></el-pagination>
       </el-col>
     </el-row>
+    <InfoForm :dialogVisible.sync="_dialogVisible" @close="close"></InfoForm>
   </div>
 </template>
 
 <script>
+import InfoForm from "./InfoForm";
 import { ref, reactive, onMounted, refs } from "@vue/composition-api";
 export default {
+  components: {
+    InfoForm
+  },
   setup(props, context) {
     const formInline = reactive({});
     const infoSelect = ref("");
@@ -117,6 +121,7 @@ export default {
         label: "行业信息"
       }
     ]);
+    const _dialogVisible = ref(false);
     const currentDate = reactive([new Date(), new Date()]);
     const searchOptions = reactive([
       {
@@ -140,9 +145,52 @@ export default {
         user: "admin"
       }
     ]);
-    const handleCurrentChange = ()=>{};
-    const handleSizeChange = ()=>{};
-    const handleAdd = () => {};
+    const handleCurrentChange = () => {};
+    const handleSizeChange = () => {};
+    const handleAdd = () => {
+      _dialogVisible.value = true;
+    };
+    const close = value => {
+      _dialogVisible.value = value;
+    };
+    const handleBatchDeleteItem = () => {
+       context.root.$confirm("是否批量删除文件?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          context.root.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          context.root.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    };
+    const handleDeleteItem = () => {
+     context.root.$confirm("是否删除该文件?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          context.root.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          context.root.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
+    };
     const handleSearch = () => {};
     return {
       options,
@@ -158,7 +206,11 @@ export default {
       handleCurrentChange,
       handleSizeChange,
       totalCount,
-      currentPage2
+      currentPage2,
+      _dialogVisible,
+      handleDeleteItem,
+      handleBatchDeleteItem,
+      close
     };
   }
 };
